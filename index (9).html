@@ -9,9 +9,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         /* Custom styles */
-        .measurement-table td, .measurement-table th {
+        .measurement-table th, .measurement-table td {
             padding: 0.5rem;
-            border: 1px solid #e2e8f0;
+            text-align: left;
+            border: none; /* Remove all existing borders first */
+            border-bottom: 1px solid #dee2e6; /* Light gray bottom border */
+        }
+        .measurement-table th {
+            font-weight: 500; /* Medium weight */
+            border-bottom-width: 2px; /* Thicker bottom border for header */
+            background-color: #f8f9fa; /* Light gray background for header */
+            color: #212529; /* Standard dark text for header */
+        }
+        .measurement-table tbody tr:nth-child(even) td {
+            background-color: #f9fafb; /* Tailwind's gray-50 for striping */
         }
         .measurement-table input {
             width: 70px;
@@ -61,49 +72,117 @@
         .dark .normal-range {
             color: #a0aec0;
         }
-        .dark .measurement-table td, 
+        .dark .measurement-table th, .dark .measurement-table td {
+            border-bottom-color: #4a5568; /* Dark mode border */
+        }
         .dark .measurement-table th {
-            border-color: #4a5568;
+            background-color: #2d3748; /* Darker gray for header bg in dark mode */
+            color: #e2e8f0; /* Light text for header in dark mode */
+        }
+        .dark .measurement-table tbody tr:nth-child(even) td {
+            background-color: #222834; /* Subtly different dark shade for striping in dark mode */
         }
         .dark .primary-btn {
-            background-color: #5D5CDE;
+            background-color: #0056a2; /* Deep blue for dark mode too */
+            color: white; /* Ensure text is white */
+        }
+        .dark .primary-btn:hover {
+            background-color: #004180; /* Darker deep blue for dark mode hover */
         }
         .dark .secondary-btn {
-            background-color: #4a5568;
+            background-color: #374151; /* Darker gray (e.g., Tailwind gray-700) */
+            color: #e2e8f0; /* Light gray text (Tailwind gray-200) */
+        }
+        .dark .secondary-btn:hover {
+            background-color: #4b5563; /* Slightly darker gray for hover */
+        }
+
+        /* Header title custom style */
+        .header-title {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #0056a2; /* Deep blue text */
+        }
+
+        /* Dark mode specific header title */
+        .dark .header-title {
+            color: white; /* White text for dark mode if header is dark */
+        }
+
+        /* Accent badge style */
+        .esc-ase-badge {
+            background-color: #00b3b3; /* Light cyan/teal */
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px; /* Equivalent to px-1.5 py-0.5 with 4px base */
+            border-radius: 0.375rem; /* Tailwind's rounded-md */
+            margin-left: 0.5rem; /* Tailwind's ml-2 */
         }
 
         /* Button styling */
         .primary-btn {
-            background-color: #5D5CDE;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #0056a2; /* Deep blue */
             color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            transition: all 0.2s;
+            padding: 0.5rem 1rem; /* Keep */
+            border-radius: 0.375rem; /* Keep */
+            font-weight: 500; /* Keep */
+            transition: all 0.2s; /* Keep */
+            border: none; /* Ensure no border */
+            box-shadow: none; /* Ensure no shadow */
         }
         .primary-btn:hover {
-            opacity: 0.9;
+            background-color: #004180; /* Darker deep blue */
+            opacity: 1; /* Remove previous opacity hover */
         }
         .secondary-btn {
-            background-color: #e2e8f0;
-            color: #4a5568;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            transition: all 0.2s;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #e9ecef; /* Light gray */
+            color: #0056a2; /* Deep blue text */
+            padding: 0.5rem 1rem; /* Keep */
+            border-radius: 0.375rem; /* Keep */
+            font-weight: 500; /* Keep */
+            transition: all 0.2s; /* Keep */
+            border: none; /* Ensure no border */
+            box-shadow: none; /* Ensure no shadow */
         }
         .secondary-btn:hover {
-            background-color: #cbd5e0;
+            background-color: #ced4da; /* Darker light gray */
         }
         .tab {
+            font-family: Arial, Helvetica, sans-serif; /* Common sans-serif font */
+            color: #6b7280; /* text-gray-500 for inactive tabs */
             cursor: pointer;
-            padding: 0.75rem 1rem;
+            padding: 0.75rem 1rem; /* Default padding */
             border-bottom: 2px solid transparent;
+            transition: color 0.2s, border-color 0.2s; /* Smooth transition for hover */
+            display: inline-flex; /* Align icon and text */
+            align-items: center; /* Align icon and text */
+        }
+        .tab:not(.active):hover {
+            color: #374151; /* text-gray-700 for inactive tab hover */
+            /* border-bottom-color: #d1d5db; */ /* border-gray-300 for hover underline - keeping it subtle */
         }
         .tab.active {
-            border-bottom: 2px solid #5D5CDE;
-            color: #5D5CDE;
-            font-weight: 500;
+            border-bottom: 2px solid #0056a2; /* Deep blue active indicator */
+            color: #0056a2; /* Deep blue active text */
+            font-weight: 500; /* Medium font weight */
+        }
+        .tab i {
+            font-size: 0.875em; /* Slightly smaller icon size relative to tab text */
+            color: inherit; /* Icon color matches tab text color */
+            margin-right: 0.4rem; /* Space between icon and text (approx mr-1.5) */
+        }
+        /* Dark mode specific tab styling */
+        .dark .tab {
+            color: #9ca3af; /* text-gray-400 for dark mode inactive tabs */
+        }
+        .dark .tab:not(.active):hover {
+            color: #d1d5db; /* text-gray-300 for dark mode inactive tab hover */
+            /* border-bottom-color: #374151; */ /* border-gray-700 for dark hover underline - keeping it subtle */
+        }
+        .dark .tab.active {
+            border-bottom-color: #007bff; /* A slightly brighter blue for dark mode active, or keep #0056a2 */
+            color: #007bff; /* A slightly brighter blue for dark mode active, or keep #0056a2 */
         }
         .tab-content {
             display: none;
@@ -268,9 +347,9 @@
                 overflow-x: auto;
                 scrollbar-width: none; /* Firefox */
                 -ms-overflow-style: none; /* IE/Edge */
-                padding: 0.5rem 0;
-                margin: 0 -1rem;
-                padding-left: 1rem;
+                /* padding: 0.5rem 0; */ /* Commented out: Let individual tab padding define vertical space */
+                /* margin: 0 -1rem; */   /* Commented out: Avoid negative margins if not essential */
+                /* padding-left: 1rem; */ /* Commented out: Let first tab's own padding work */
             }
 
             nav[aria-label="Tabs"]::-webkit-scrollbar {
@@ -370,24 +449,157 @@
         .dark .fab {
             --primary-color: #6B7ED9;
         }
+
+        /* Content Section Styling */
+        .content-section-container {
+            background-color: white;
+            border: 1px solid #d1d5db; /* Tailwind gray-300 */
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            padding: 1.5rem; /* Tailwind p-6 */
+        }
+        .dark .content-section-container {
+            background-color: #2d3748 !important; /* Ensure override over .dark .bg-white */
+            border-color: #4a5568 !important; /* Ensure override over .dark .border-gray-300 */
+        }
+
+        .section-title { /* For H2 elements */
+            font-family: Arial, Helvetica, sans-serif;
+            color: #0056a2; /* Deep blue */
+            font-size: 1.25rem; /* 20px */
+            font-weight: 500; /* medium */
+            margin-bottom: 1rem; /* mb-4 */
+        }
+        .dark .section-title {
+            color: #add8e6 !important; /* Light blue for dark mode, !important to override .dark .text-gray-900 */
+        }
+
+        .sub-section-title { /* For H3 elements */
+            font-family: Arial, Helvetica, sans-serif;
+            color: #0056a2; /* Deep blue */
+            font-size: 1.125rem; /* 18px, slightly larger than text-md for more emphasis */
+            font-weight: 500; /* medium */
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .dark .sub-section-title {
+            color: #add8e6 !important; /* Light blue for dark mode, !important to override .dark .text-gray-800 */
+        }
+
+        .form-label { /* For label elements */
+            font-family: Arial, Helvetica, sans-serif;
+            color: #374151; /* Tailwind text-gray-700 */
+            font-size: 0.875rem; /* text-sm (14px) */
+            font-weight: 500; /* medium */
+            display: block; /* Ensure block display like Tailwind .block */
+            margin-bottom: 0.5rem; /* Standardized to 0.5rem (equiv. to mb-2) */
+        }
+        .dark .form-label {
+            color: #d1d5db !important; /* Tailwind text-gray-300 for dark mode, !important to override .dark .text-gray-700 */
+        }
+
+        /* Form Input General Styling (applied via JS or direct CSS overrides for now) */
+        /* Inputs, Selects, Textareas */
+        .form-input, .measurement-table input, select, textarea {
+            font-family: Arial, Helvetica, sans-serif;
+            border: 1px solid #d1d5db; /* gray-300 */
+            box-shadow: none;
+            /* Tailwind 'rounded-md' and 'py-2 px-3 text-base' are kept on elements for now */
+        }
+        .form-input:focus, .measurement-table input:focus, select:focus, textarea:focus {
+            border-color: #0056a2 !important; /* Deep blue */
+            box-shadow: 0 0 0 2px rgba(0, 86, 162, 0.25) !important;
+            outline: none !important;
+        }
+        .dark .form-input, .dark .measurement-table input, .dark select, .dark textarea {
+            background-color: #4a5568 !important; /* Existing dark mode input bg */
+            color: #e2e8f0 !important;       /* Existing dark mode input text */
+            border-color: #718096 !important; /* Existing dark mode input border */
+        }
+        .dark .form-input:focus, .dark .measurement-table input:focus, .dark select:focus, .dark textarea:focus {
+            border-color: #007bff !important; /* Lighter blue for dark mode focus */
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25) !important;
+        }
+
+        /* Readonly inputs like #sc already have bg-gray-50, which is fine */
+        /* .dark #sc will use the generic .dark input style which is #4a5568 */
+
+        /* Checkbox specific styling */
+        input[type="checkbox"].form-checkbox-style {
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-radius: 0.25rem; /* rounded */
+            color: #0056a2; /* Deep blue for the checkmark/accent */
+            box-shadow: none;
+            /* Default Tailwind h-4 w-4 for size is good */
+        }
+        input[type="checkbox"].form-checkbox-style:focus {
+            border-color: #0056a2;
+            box-shadow: 0 0 0 2px rgba(0, 86, 162, 0.25);
+            outline: none;
+        }
+        .dark input[type="checkbox"].form-checkbox-style {
+            border-color: #718096;
+            background-color: #4a5568; /* So the box isn't stark white before checking */
+            color: #007bff; /* Lighter blue checkmark for dark mode */
+        }
+         .dark input[type="checkbox"].form-checkbox-style:checked {
+            background-color: #007bff; /* Background of checkbox when checked in dark mode */
+        }
+        .dark input[type="checkbox"].form-checkbox-style:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        /* Flash Message Styling */
+        /* Base styles (p-4, rounded, mb-6) are on the div in HTML */
+        .flash-success {
+            background-color: #dcfce7; /* Tailwind green-100 */
+            color: #166534; /* Tailwind green-800 */
+        }
+        .dark .flash-success {
+            background-color: #14532d; /* Tailwind green-900 */
+            color: #dcfce7; /* Tailwind green-100 */
+        }
+        .flash-error {
+            background-color: #fee2e2; /* Tailwind red-100 */
+            color: #991b1b; /* Tailwind red-800 */
+        }
+        .dark .flash-error {
+            background-color: #7f1d1d; /* Tailwind red-900 */
+            color: #fee2e2; /* Tailwind red-100 */
+        }
+        .flash-warning {
+            background-color: #fef3c7; /* Tailwind amber-100 */
+            color: #92400e; /* Tailwind amber-800 */
+        }
+        .dark .flash-warning {
+            background-color: #78350f; /* Tailwind amber-900 */
+            color: #fef3c7; /* Tailwind amber-100 */
+        }
+        .flash-info {
+            background-color: #dbeafe; /* Tailwind blue-100 */
+            color: #1e40af; /* Tailwind blue-800 */
+        }
+        .dark .flash-info {
+            background-color: #1e3a8a; /* Tailwind blue-900 */
+            color: #dbeafe; /* Tailwind blue-100 */
+        }
     </style>
 </head>
 <body class="font-sans h-full bg-gray-100">
     <div class="min-h-full">
         <!-- Header -->
-        <header class="bg-white shadow border-b border-gray-200 no-print">
+        <header class="bg-white border-b border-gray-300 no-print"> {/* Removed shadow, updated border */}
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
                 <div class="flex items-center">
-                    <h1 class="text-2xl font-bold text-gray-900 flex items-center">
-                        <span class="text-blue-600 mr-2"><i class="fas fa-heartbeat"></i></span> 
-                        EchoCard Pro
+                    <h1 class="header-title text-[22px] font-bold uppercase flex items-center"> {/* Applied custom class, size, transform */}
+                        ADVANCED ECHO REPORT BUILDER
+                        <span class="esc-ase-badge">ESC/ASE Guidelines</span> {/* Accent Badge */}
                     </h1>
                 </div>
                 <div class="flex space-x-4">
-                    <button id="darkModeToggle" class="p-2 text-gray-600 hover:text-gray-900 rounded">
+                    <button id="darkModeToggle" class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 rounded">
                         <i class="fas fa-moon"></i>
                     </button>
-                    <button id="settingsBtn" class="p-2 text-gray-600 hover:text-gray-900 rounded">
+                    <button id="settingsBtn" class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 rounded">
                         <i class="fas fa-cog"></i>
                     </button>
                 </div>
@@ -397,28 +609,28 @@
         <!-- Main content -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 no-print">
             <!-- Tabs -->
-            <div class="border-b border-gray-200 mb-6">
-                <nav class="flex space-x-8 overflow-x-auto" aria-label="Tabs">
+            <div class="border-b border-gray-300 mb-6"> {/* Updated border color for tab container */}
+                <nav class="flex space-x-6 overflow-x-auto" aria-label="Tabs"> {/* Reduced space-x-8 to space-x-6 */}
                     <div class="tab active" data-tab="patient-info">
-                        <i class="fas fa-user-circle mr-2"></i> Patient
+                        <i class="fas fa-user-circle"></i>Patient
                     </div>
                     <div class="tab" data-tab="measurements">
-                        <i class="fas fa-ruler mr-2"></i> Mesures
+                        <i class="fas fa-ruler"></i>Mesures
                     </div>
                     <div class="tab" data-tab="valvulopathy">
-                        <i class="fas fa-heart-broken mr-2"></i> Valvulopathies
+                        <i class="fas fa-heart-broken"></i>Valvulopathies
                     </div>
                     <div class="tab" data-tab="cardiomyopathy">
-                        <i class="fas fa-heart mr-2"></i> Cardiomyopathies
+                        <i class="fas fa-heart"></i>Cardiomyopathies
                     </div>
                     <div class="tab" data-tab="congenital">
-                        <i class="fas fa-baby mr-2"></i> Cardiopathies Congénitales
+                        <i class="fas fa-baby"></i>Cardiopathies Congénitales
                     </div>
                     <div class="tab" data-tab="dictation">
-                        <i class="fas fa-microphone mr-2"></i> Dictée
+                        <i class="fas fa-microphone"></i>Dictée
                     </div>
                     <div class="tab" data-tab="report">
-                        <i class="fas fa-file-medical-alt mr-2"></i> Rapport
+                        <i class="fas fa-file-medical-alt"></i>Rapport
                     </div>
                 </nav>
             </div>
@@ -428,52 +640,52 @@
 
             <!-- Patient Information Tab -->
             <div id="patient-info" class="tab-content active">
-                <div class="bg-white shadow rounded-lg p-6">
-                    <h2 class="text-lg font-medium text-gray-900 mb-4">Informations du Patient et de l'Examen</h2>
+                <div class="content-section-container"> {/* Replaced classes */}
+                    <h2 class="section-title">Informations du Patient et de l'Examen</h2> {/* Replaced classes */}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="patient-name" class="block text-sm font-medium text-gray-700">Nom et prénom du patient</label>
-                            <input type="text" id="patient-name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Nom et prénom">
+                            <label for="patient-name" class="form-label">Nom et prénom du patient</label> {/* Replaced classes */}
+                            <input type="text" id="patient-name" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none" placeholder="Nom et prénom">
                         </div>
                         <div>
-                            <label for="patient-age" class="block text-sm font-medium text-gray-700">Âge</label>
-                            <input type="number" id="patient-age" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Âge">
+                            <label for="patient-age" class="form-label">Âge</label> {/* Replaced classes */}
+                            <input type="number" id="patient-age" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none" placeholder="Âge">
                         </div>
                         <div>
-                            <label for="patient-sex" class="block text-sm font-medium text-gray-700">Sexe</label>
-                            <select id="patient-sex" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            <label for="patient-sex" class="form-label">Sexe</label> {/* Replaced classes */}
+                            <select id="patient-sex" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                 <option value="">Sélectionner</option>
                                 <option value="M">Homme</option>
                                 <option value="F">Femme</option>
                             </select>
                         </div>
                         <div>
-                            <label for="patient-weight" class="block text-sm font-medium text-gray-700">Poids (kg)</label>
-                            <input type="number" id="patient-weight" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Poids">
+                            <label for="patient-weight" class="form-label">Poids (kg)</label> {/* Replaced classes */}
+                            <input type="number" id="patient-weight" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none" placeholder="Poids">
                         </div>
                         <div>
-                            <label for="patient-height" class="block text-sm font-medium text-gray-700">Taille (cm)</label>
-                            <input type="number" id="patient-height" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Taille">
+                            <label for="patient-height" class="form-label">Taille (cm)</label> {/* Replaced classes */}
+                            <input type="number" id="patient-height" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none" placeholder="Taille">
                         </div>
                         <div>
-                            <label for="sc" class="block text-sm font-medium text-gray-700">Surface Corporelle (m²)</label>
-                            <input type="number" id="sc" readonly="" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base bg-gray-50 focus:outline-none" placeholder="Calculée automatiquement">
+                            <label for="sc" class="form-label">Surface Corporelle (m²)</label> {/* Replaced classes */}
+                            <input type="number" id="sc" readonly="" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-base bg-gray-50 focus:outline-none" placeholder="Calculée automatiquement">
                         </div>
                         <div>
-                            <label for="referring-doctor" class="block text-sm font-medium text-gray-700">Médecin référent</label>
-                            <input type="text" id="referring-doctor" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Dr. Nom du médecin">
+                            <label for="referring-doctor" class="form-label">Médecin référent</label> {/* Replaced classes */}
+                            <input type="text" id="referring-doctor" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none" placeholder="Dr. Nom du médecin">
                         </div>
                         <div>
-                            <label for="exam-date" class="block text-sm font-medium text-gray-700">Date de l'examen</label>
-                            <input type="date" id="exam-date" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            <label for="exam-date" class="form-label">Date de l'examen</label> {/* Replaced classes */}
+                            <input type="date" id="exam-date" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                         </div>
                         <div class="md:col-span-2">
-                            <label for="clinical-indication" class="block text-sm font-medium text-gray-700">Motif de l'examen</label>
-                            <input type="text" id="clinical-indication" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Indication clinique">
+                            <label for="clinical-indication" class="form-label">Motif de l'examen</label> {/* Replaced classes */}
+                            <input type="text" id="clinical-indication" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none" placeholder="Indication clinique">
                         </div>
                         <div class="md:col-span-2">
-                            <label for="echo-quality" class="block text-sm font-medium text-gray-700">Qualité et Echogénécité</label>
-                            <select id="echo-quality" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            <label for="echo-quality" class="form-label">Qualité et Echogénécité</label> {/* Replaced classes */}
+                            <select id="echo-quality" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                 <option value="Excellente">Excellente</option>
                                 <option value="Bonne">Bonne</option>
                                 <option value="Acceptable">Acceptable</option>
@@ -492,15 +704,15 @@
 
             <!-- Measurements Tab -->
             <div id="measurements" class="tab-content">
-                <div class="bg-white shadow rounded-lg p-6">
-                    <h2 class="text-lg font-medium text-gray-900 mb-4">Mesures Échographiques</h2>
+                <div class="content-section-container"> {/* Replaced classes */}
+                    <h2 class="section-title">Mesures Échographiques</h2> {/* Replaced classes */}
                     
                     <div class="mb-6">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Ventricule Gauche (VG)</h3>
+                        <h3 class="sub-section-title">Ventricule Gauche (VG)</h3> {/* Replaced classes */}
                         <div class="overflow-x-auto">
                             <table class="measurement-table w-full">
                                 <thead>
-                                    <tr class="bg-gray-100">
+                                    <tr>
                                         <th>Mesure</th>
                                         <th>Résultat</th>
                                         <th>Valeur normale</th>
@@ -583,11 +795,11 @@
                     </div>
                     
                     <div class="mb-6">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Trouble de la Cinétique Ventriculaire Gauche</h3>
+                        <h3 class="sub-section-title">Trouble de la Cinétique Ventriculaire Gauche</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Type de Trouble</label>
-                                <select id="cinetique-type" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Type de Trouble</label> {/* mb-2 removed */}
+                                <select id="cinetique-type" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Aucun">Aucun trouble</option>
                                     <option value="Hypokinésie">Hypokinésie</option>
                                     <option value="Akinésie">Akinésie</option>
@@ -596,8 +808,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Étendue</label>
-                                <select id="cinetique-etendue" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Étendue</label> {/* mb-2 removed */}
+                                <select id="cinetique-etendue" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="">Sélectionnez</option>
                                     <option value="Localisée">Localisée</option>
                                     <option value="Diffuse">Diffuse</option>
@@ -609,49 +821,49 @@
                         <div class="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="flex items-center">
-                                    <input type="checkbox" id="cinetique-anteroseptale" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                                    <input type="checkbox" id="cinetique-anteroseptale" class="h-4 w-4 form-checkbox-style">
                                     <span class="ml-2 text-sm text-gray-700">Antéroseptale</span>
                                 </label>
                             </div>
                             <div>
                                 <label class="flex items-center">
-                                    <input type="checkbox" id="cinetique-anterieure" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                                    <input type="checkbox" id="cinetique-anterieure" class="h-4 w-4 form-checkbox-style">
                                     <span class="ml-2 text-sm text-gray-700">Antérieure</span>
                                 </label>
                             </div>
                             <div>
                                 <label class="flex items-center">
-                                    <input type="checkbox" id="cinetique-laterale" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                                    <input type="checkbox" id="cinetique-laterale" class="h-4 w-4 form-checkbox-style">
                                     <span class="ml-2 text-sm text-gray-700">Latérale</span>
                                 </label>
                             </div>
                             <div>
                                 <label class="flex items-center">
-                                    <input type="checkbox" id="cinetique-posterieure" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                                    <input type="checkbox" id="cinetique-posterieure" class="h-4 w-4 form-checkbox-style">
                                     <span class="ml-2 text-sm text-gray-700">Postérieure</span>
                                 </label>
                             </div>
                             <div>
                                 <label class="flex items-center">
-                                    <input type="checkbox" id="cinetique-inferieure" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                                    <input type="checkbox" id="cinetique-inferieure" class="h-4 w-4 form-checkbox-style">
                                     <span class="ml-2 text-sm text-gray-700">Inférieure</span>
                                 </label>
                             </div>
                             <div>
                                 <label class="flex items-center">
-                                    <input type="checkbox" id="cinetique-septale" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                                    <input type="checkbox" id="cinetique-septale" class="h-4 w-4 form-checkbox-style">
                                     <span class="ml-2 text-sm text-gray-700">Septale</span>
                                 </label>
                             </div>
                             <div>
                                 <label class="flex items-center">
-                                    <input type="checkbox" id="cinetique-apicale" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                                    <input type="checkbox" id="cinetique-apicale" class="h-4 w-4 form-checkbox-style">
                                     <span class="ml-2 text-sm text-gray-700">Apicale</span>
                                 </label>
                             </div>
                             <div>
                                 <label class="flex items-center">
-                                    <input type="checkbox" id="cinetique-basale" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                                    <input type="checkbox" id="cinetique-basale" class="h-4 w-4 form-checkbox-style">
                                     <span class="ml-2 text-sm text-gray-700">Basale</span>
                                 </label>
                             </div>
@@ -659,11 +871,11 @@
                     </div>
                     
                     <div class="mb-6">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Oreillette Gauche (OG)</h3>
+                        <h3 class="sub-section-title">Oreillette Gauche (OG)</h3> {/* Replaced classes */}
                         <div class="overflow-x-auto">
                             <table class="measurement-table w-full">
                                 <thead>
-                                    <tr class="bg-gray-100">
+                                    <tr>
                                         <th>Mesure</th>
                                         <th>Résultat</th>
                                         <th>Valeur normale</th>
@@ -711,7 +923,7 @@
                     </div>
                     
                     <div class="mb-6">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Oreillette Droite (OD)</h3>
+                        <h3 class="sub-section-title">Oreillette Droite (OD)</h3> {/* Replaced classes */}
                         <div class="overflow-x-auto">
                             <table class="measurement-table w-full">
                                 <thead>
@@ -743,7 +955,7 @@
                     </div>
                     
                     <div class="mb-6">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Ventricule Droit (VD)</h3>
+                        <h3 class="sub-section-title">Ventricule Droit (VD)</h3> {/* Replaced classes */}
                         <div class="overflow-x-auto">
                             <table class="measurement-table w-full">
                                 <thead>
@@ -795,7 +1007,7 @@
                     </div>
                     
                     <div class="mb-6">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Aorte</h3>
+                        <h3 class="sub-section-title">Aorte</h3> {/* Replaced classes */}
                         <div class="overflow-x-auto">
                             <table class="measurement-table w-full">
                                 <thead>
@@ -847,11 +1059,11 @@
                     </div>
                     
                     <div class="mb-6">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Doppler</h3>
+                        <h3 class="sub-section-title">Doppler</h3> {/* Replaced classes */}
                         <div class="overflow-x-auto">
                             <table class="measurement-table w-full">
                                 <thead>
-                                    <tr class="bg-gray-100">
+                                    <tr>
                                         <th>Mesure</th>
                                         <th>Résultat</th>
                                         <th>Valeur normale</th>
@@ -924,15 +1136,15 @@
                     </div>
                     
                     <div class="mb-6">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Veine Cave Inférieure (VCI)</h3>
+                        <h3 class="sub-section-title">Veine Cave Inférieure (VCI)</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Diamètre (mm)</label>
-                                <input type="number" id="vci-diametre" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Diamètre (mm)</label> {/* mb-2 removed */}
+                                <input type="number" id="vci-diametre" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Compliance respiratoire</label>
-                                <select id="vci-compliance" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Compliance respiratoire</label> {/* mb-2 removed */}
+                                <select id="vci-compliance" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Normale">Normale (&gt; 50%)</option>
                                     <option value="Réduite">Réduite (&lt; 50%)</option>
                                     <option value="Absente">Absente</option>
@@ -943,11 +1155,11 @@
                     </div>
                     
                     <div class="mb-6">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Péricarde</h3>
+                        <h3 class="sub-section-title">Péricarde</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">État du péricarde</label>
-                                <select id="pericarde" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">État du péricarde</label> {/* mb-2 removed */}
+                                <select id="pericarde" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Normal">Normal</option>
                                     <option value="Épanchement minime">Épanchement minime</option>
                                     <option value="Épanchement modéré">Épanchement modéré</option>
@@ -972,15 +1184,15 @@
             
             <!-- Valvulopathy Tab -->
             <div id="valvulopathy" class="tab-content">
-                <div class="bg-white shadow rounded-lg p-6">
-                    <h2 class="text-lg font-medium text-gray-900 mb-4">Valvulopathies</h2>
+                <div class="content-section-container"> {/* Replaced classes */}
+                    <h2 class="section-title">Valvulopathies</h2> {/* Replaced classes */}
                     
                     <div class="mb-8">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Valve Aortique</h3>
+                        <h3 class="sub-section-title">Valve Aortique</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">État de la valve</label>
-                                <select id="valve-aortique" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">État de la valve</label> {/* mb-2 removed */}
+                                <select id="valve-aortique" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Normale">Normale</option>
                                     <option value="Sclérose">Sclérose sans sténose</option>
                                     <option value="Calcifications">Calcifications</option>
@@ -991,8 +1203,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Sténose Aortique</label>
-                                <select id="valve-ao-stenose" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Sténose Aortique</label> {/* mb-2 removed */}
+                                <select id="valve-ao-stenose" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Légère">Légère</option>
                                     <option value="Modérée">Modérée</option>
@@ -1001,8 +1213,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Insuffisance Aortique</label>
-                                <select id="valve-ao-insuffisance" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Insuffisance Aortique</label> {/* mb-2 removed */}
+                                <select id="valve-ao-insuffisance" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Minime">Minime</option>
                                     <option value="Légère">Légère</option>
@@ -1015,7 +1227,7 @@
                         <div class="overflow-x-auto">
                             <table class="measurement-table w-full">
                                 <thead>
-                                    <tr class="bg-gray-100">
+                                    <tr>
                                         <th>Paramètre</th>
                                         <th>Résultat</th>
                                         <th>Valeur normale/seuil</th>
@@ -1073,11 +1285,11 @@
                     </div>
                     
                     <div class="mb-8">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Valve Mitrale</h3>
+                        <h3 class="sub-section-title">Valve Mitrale</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">État de la valve</label>
-                                <select id="valve-mitrale" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">État de la valve</label> {/* mb-2 removed */}
+                                <select id="valve-mitrale" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Normale">Normale</option>
                                     <option value="Prolapsus">Prolapsus valvulaire</option>
                                     <option value="Remaniement fibreux">Remaniement fibreux</option>
@@ -1088,8 +1300,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Sténose Mitrale</label>
-                                <select id="valve-mit-stenose" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Sténose Mitrale</label> {/* mb-2 removed */}
+                                <select id="valve-mit-stenose" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Légère">Légère</option>
                                     <option value="Modérée">Modérée</option>
@@ -1098,8 +1310,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Insuffisance Mitrale</label>
-                                <select id="valve-mit-insuffisance" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Insuffisance Mitrale</label> {/* mb-2 removed */}
+                                <select id="valve-mit-insuffisance" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Minime">Minime</option>
                                     <option value="Légère">Légère</option>
@@ -1112,7 +1324,7 @@
                         <div class="overflow-x-auto">
                             <table class="measurement-table w-full">
                                 <thead>
-                                    <tr class="bg-gray-100">
+                                    <tr>
                                         <th>Paramètre</th>
                                         <th>Résultat</th>
                                         <th>Valeur normale/seuil</th>
@@ -1155,11 +1367,11 @@
                     </div>
                     
                     <div class="mb-8">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Valve Tricuspide</h3>
+                        <h3 class="sub-section-title">Valve Tricuspide</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">État de la valve</label>
-                                <select id="valve-tricuspide" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">État de la valve</label> {/* mb-2 removed */}
+                                <select id="valve-tricuspide" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Normale">Normale</option>
                                     <option value="Remaniement">Remaniement</option>
                                     <option value="Prolapsus">Prolapsus</option>
@@ -1168,8 +1380,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Sténose Tricuspidienne</label>
-                                <select id="valve-tri-stenose" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Sténose Tricuspidienne</label> {/* mb-2 removed */}
+                                <select id="valve-tri-stenose" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Légère">Légère</option>
                                     <option value="Modérée">Modérée</option>
@@ -1177,8 +1389,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Insuffisance Tricuspidienne</label>
-                                <select id="valve-tri-insuffisance" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Insuffisance Tricuspidienne</label> {/* mb-2 removed */}
+                                <select id="valve-tri-insuffisance" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Minime">Minime</option>
                                     <option value="Légère">Légère</option>
@@ -1191,7 +1403,7 @@
                         <div class="overflow-x-auto">
                             <table class="measurement-table w-full">
                                 <thead>
-                                    <tr class="bg-gray-100">
+                                    <tr>
                                         <th>Paramètre</th>
                                         <th>Résultat</th>
                                         <th>Valeur normale/seuil</th>
@@ -1234,11 +1446,11 @@
                     </div>
                     
                     <div class="mb-6">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Valve Pulmonaire</h3>
+                        <h3 class="sub-section-title">Valve Pulmonaire</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">État de la valve</label>
-                                <select id="valve-pulmonaire" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">État de la valve</label> {/* mb-2 removed */}
+                                <select id="valve-pulmonaire" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Normale">Normale</option>
                                     <option value="Remaniement">Remaniement</option>
                                     <option value="Sténosée">Sténosée</option>
@@ -1246,8 +1458,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Sténose Pulmonaire</label>
-                                <select id="valve-pul-stenose" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Sténose Pulmonaire</label> {/* mb-2 removed */}
+                                <select id="valve-pul-stenose" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Légère">Légère</option>
                                     <option value="Modérée">Modérée</option>
@@ -1255,8 +1467,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Insuffisance Pulmonaire</label>
-                                <select id="valve-pul-insuffisance" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Insuffisance Pulmonaire</label> {/* mb-2 removed */}
+                                <select id="valve-pul-insuffisance" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Minime">Minime</option>
                                     <option value="Légère">Légère</option>
@@ -1269,7 +1481,7 @@
                         <div class="overflow-x-auto">
                             <table class="measurement-table w-full">
                                 <thead>
-                                    <tr class="bg-gray-100">
+                                    <tr>
                                         <th>Paramètre</th>
                                         <th>Résultat</th>
                                         <th>Valeur normale/seuil</th>
@@ -1301,9 +1513,9 @@
                         </div>
                     </div>
                     
-                    <div id="valvulopathy-diagnostic" class="p-4 mt-6 mb-6 bg-blue-50 border border-blue-200 rounded-lg">
-                        <h3 class="text-md font-medium text-blue-800 mb-2">Diagnostic Valvulaire Suggéré</h3>
-                        <div id="valvular-diagnostic-content" class="text-blue-800">
+                    <div id="valvulopathy-diagnostic" class="p-4 mt-6 mb-6 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-900 dark:border-blue-700 dark:text-blue-300">
+                        <h3 class="text-md font-medium text-blue-800 mb-2 dark:text-blue-200">Diagnostic Valvulaire Suggéré</h3>
+                        <div id="valvular-diagnostic-content" class="text-blue-800 dark:text-blue-300">
                             Remplissez les mesures valvulaires pour obtenir un diagnostic suggéré.
                         </div>
                     </div>
@@ -1312,7 +1524,7 @@
                         <button id="back-to-measurements" class="secondary-btn">
                             <i class="fas fa-arrow-left mr-2"></i> Retour
                         </button>
-                        <button id="update-valvular-diagnostic" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md mx-2">
+                        <button id="update-valvular-diagnostic" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md mx-2 font-medium shadow-none border-none">
                             <i class="fas fa-sync-alt mr-2"></i> Mettre à jour le diagnostic
                         </button>
                         <button id="next-to-cardiomyopathy" class="primary-btn">
@@ -1324,15 +1536,15 @@
             
             <!-- Cardiomyopathy Tab -->
             <div id="cardiomyopathy" class="tab-content">
-                <div class="bg-white shadow rounded-lg p-6">
-                    <h2 class="text-lg font-medium text-gray-900 mb-4">Cardiomyopathies</h2>
+                <div class="content-section-container"> {/* Replaced classes */}
+                    <h2 class="section-title">Cardiomyopathies</h2> {/* Replaced classes */}
                     
                     <div class="mb-6">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Classification principale</h3>
+                        <h3 class="sub-section-title">Classification principale</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Type de cardiomyopathie</label>
-                                <select id="cardio-type" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Type de cardiomyopathie</label> {/* mb-2 removed */}
+                                <select id="cardio-type" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Aucune">Aucune cardiomyopathie</option>
                                     <option value="Dilatée">Cardiomyopathie dilatée</option>
                                     <option value="Hypertrophique">Cardiomyopathie hypertrophique</option>
@@ -1344,8 +1556,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Sévérité</label>
-                                <select id="cardio-severite" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Sévérité</label> {/* mb-2 removed */}
+                                <select id="cardio-severite" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="">Non applicable</option>
                                     <option value="Légère">Légère</option>
                                     <option value="Modérée">Modérée</option>
@@ -1357,11 +1569,11 @@
                     
                     <!-- Cardiomyopathie dilatée -->
                     <div id="cmd-section" class="mb-6 hidden">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Cardiomyopathie Dilatée - Critères additionnels</h3>
+                        <h3 class="sub-section-title">Cardiomyopathie Dilatée - Critères additionnels</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Dilatation VG</label>
-                                <select id="cmd-dilatation" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Dilatation VG</label> {/* mb-2 removed */}
+                                <select id="cmd-dilatation" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Légère">Légère</option>
                                     <option value="Modérée">Modérée</option>
@@ -1369,8 +1581,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Dysfonction systolique VG</label>
-                                <select id="cmd-systolique" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Dysfonction systolique VG</label> {/* mb-2 removed */}
+                                <select id="cmd-systolique" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Légère">Légère (FEVG 45-54%)</option>
                                     <option value="Modérée">Modérée (FEVG 30-44%)</option>
@@ -1378,15 +1590,15 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Fonction VD</label>
-                                <select id="cmd-vd" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Fonction VD</label> {/* mb-2 removed */}
+                                <select id="cmd-vd" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Normale">Normale</option>
                                     <option value="Altérée">Altérée</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Origine suspectée</label>
-                                <select id="cmd-origine" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Origine suspectée</label> {/* mb-2 removed */}
+                                <select id="cmd-origine" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Indéterminée">Indéterminée</option>
                                     <option value="Idiopathique">Idiopathique</option>
                                     <option value="Ischémique">Ischémique</option>
@@ -1402,11 +1614,11 @@
                     
                     <!-- Cardiomyopathie hypertrophique -->
                     <div id="cmh-section" class="mb-6 hidden">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Cardiomyopathie Hypertrophique - Critères additionnels</h3>
+                        <h3 class="sub-section-title">Cardiomyopathie Hypertrophique - Critères additionnels</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Type d'hypertrophie</label>
-                                <select id="cmh-type" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Type d'hypertrophie</label> {/* mb-2 removed */}
+                                <select id="cmh-type" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Septale asymétrique">Septale asymétrique</option>
                                     <option value="Concentrique">Concentrique</option>
                                     <option value="Apicale">Apicale</option>
@@ -1415,12 +1627,12 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Épaisseur maximale (mm)</label>
-                                <input type="number" id="cmh-epaisseur" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Épaisseur maximale (mm)</label> {/* mb-2 removed */}
+                                <input type="number" id="cmh-epaisseur" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Obstruction sous-aortique</label>
-                                <select id="cmh-obstruction" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Obstruction sous-aortique</label> {/* mb-2 removed */}
+                                <select id="cmh-obstruction" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente (&lt; 30 mmHg)</option>
                                     <option value="Au repos">Présente au repos (≥ 30 mmHg)</option>
                                     <option value="Provoquée">Provoquée (≥ 30 mmHg)</option>
@@ -1428,20 +1640,20 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Gradient maximal (mmHg)</label>
-                                <input type="number" id="cmh-gradient" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Gradient maximal (mmHg)</label> {/* mb-2 removed */}
+                                <input type="number" id="cmh-gradient" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">SAM (Mouvement systolique antérieur)</label>
-                                <select id="cmh-sam" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">SAM (Mouvement systolique antérieur)</label> {/* mb-2 removed */}
+                                <select id="cmh-sam" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absent">Absent</option>
                                     <option value="Présent sans contact">Présent sans contact septal</option>
                                     <option value="Présent avec contact">Présent avec contact septal</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Insuffisance mitrale associée</label>
-                                <select id="cmh-im" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Insuffisance mitrale associée</label> {/* mb-2 removed */}
+                                <select id="cmh-im" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Légère">Légère</option>
                                     <option value="Modérée">Modérée</option>
@@ -1453,11 +1665,11 @@
                     
                     <!-- Cardiomyopathie restrictive -->
                     <div id="cmr-section" class="mb-6 hidden">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Cardiomyopathie Restrictive - Critères additionnels</h3>
+                        <h3 class="sub-section-title">Cardiomyopathie Restrictive - Critères additionnels</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Profil de remplissage</label>
-                                <select id="cmr-remplissage" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Profil de remplissage</label> {/* mb-2 removed */}
+                                <select id="cmr-remplissage" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Normal">Normal</option>
                                     <option value="Trouble relaxation">Trouble de la relaxation</option>
                                     <option value="Pseudo-normal">Pseudo-normal</option>
@@ -1465,8 +1677,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Dilatation bi-auriculaire</label>
-                                <select id="cmr-dilatation" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Dilatation bi-auriculaire</label> {/* mb-2 removed */}
+                                <select id="cmr-dilatation" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Légère">Légère</option>
                                     <option value="Modérée">Modérée</option>
@@ -1474,16 +1686,16 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Épaississement des parois</label>
-                                <select id="cmr-parois" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Épaississement des parois</label> {/* mb-2 removed */}
+                                <select id="cmr-parois" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absent">Absent</option>
                                     <option value="Présent">Présent</option>
                                     <option value="Granuleux">Aspect granuleux/scintillant</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Étiologie suspectée</label>
-                                <select id="cmr-etiologie" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Étiologie suspectée</label> {/* mb-2 removed */}
+                                <select id="cmr-etiologie" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Indéterminée">Indéterminée</option>
                                     <option value="Amylose">Amylose</option>
                                     <option value="Sarcoïdose">Sarcoïdose</option>
@@ -1498,11 +1710,11 @@
                     
                     <!-- Cardiomyopathie arythmogène du VD -->
                     <div id="cmavd-section" class="mb-6 hidden">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Cardiomyopathie Arythmogène du VD - Critères additionnels</h3>
+                        <h3 class="sub-section-title">Cardiomyopathie Arythmogène du VD - Critères additionnels</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Dilatation VD</label>
-                                <select id="cmavd-dilatation" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Dilatation VD</label> {/* mb-2 removed */}
+                                <select id="cmavd-dilatation" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Légère">Légère</option>
                                     <option value="Modérée">Modérée</option>
@@ -1510,15 +1722,15 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Anévrisme VD</label>
-                                <select id="cmavd-anevrisme" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Anévrisme VD</label> {/* mb-2 removed */}
+                                <select id="cmavd-anevrisme" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absent">Absent</option>
                                     <option value="Présent">Présent</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Dysfonction VD</label>
-                                <select id="cmavd-dysfonction" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Dysfonction VD</label> {/* mb-2 removed */}
+                                <select id="cmavd-dysfonction" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Légère">Légère</option>
                                     <option value="Modérée">Modérée</option>
@@ -1526,8 +1738,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Atteinte VG associée</label>
-                                <select id="cmavd-vg" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Atteinte VG associée</label> {/* mb-2 removed */}
+                                <select id="cmavd-vg" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Présente">Présente</option>
                                 </select>
@@ -1537,15 +1749,15 @@
                     
                     <!-- Non compaction -->
                     <div id="cmnc-section" class="mb-6 hidden">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Cardiomyopathie par Non-Compaction - Critères additionnels</h3>
+                        <h3 class="sub-section-title">Cardiomyopathie par Non-Compaction - Critères additionnels</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Ratio NC/C maximal</label>
-                                <input type="number" id="cmnc-ratio" step="0.1" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Ratio NC/C maximal</label> {/* mb-2 removed */}
+                                <input type="number" id="cmnc-ratio" step="0.1" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Localisation principale</label>
-                                <select id="cmnc-localisation" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Localisation principale</label> {/* mb-2 removed */}
+                                <select id="cmnc-localisation" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Apex">Apex</option>
                                     <option value="Paroi latérale">Paroi latérale</option>
                                     <option value="Paroi inférieure">Paroi inférieure</option>
@@ -1554,8 +1766,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Fonction systolique VG</label>
-                                <select id="cmnc-fonction" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Fonction systolique VG</label> {/* mb-2 removed */}
+                                <select id="cmnc-fonction" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Normale">Normale</option>
                                     <option value="Légèrement altérée">Légèrement altérée</option>
                                     <option value="Modérément altérée">Modérément altérée</option>
@@ -1563,8 +1775,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Thrombus intra-cavitaire</label>
-                                <select id="cmnc-thrombus" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Thrombus intra-cavitaire</label> {/* mb-2 removed */}
+                                <select id="cmnc-thrombus" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absent">Absent</option>
                                     <option value="Présent">Présent</option>
                                 </select>
@@ -1574,11 +1786,11 @@
                     
                     <!-- Takotsubo -->
                     <div id="cmtako-section" class="mb-6 hidden">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Cardiomyopathie de Takotsubo - Critères additionnels</h3>
+                        <h3 class="sub-section-title">Cardiomyopathie de Takotsubo - Critères additionnels</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Type morphologique</label>
-                                <select id="cmtako-type" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Type morphologique</label> {/* mb-2 removed */}
+                                <select id="cmtako-type" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Apical classique">Apical classique (typique)</option>
                                     <option value="Médio-ventriculaire">Médio-ventriculaire</option>
                                     <option value="Basal">Basal (inversé)</option>
@@ -1587,19 +1799,19 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">FEVG (%)</label>
-                                <input type="number" id="cmtako-fevg" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">FEVG (%)</label> {/* mb-2 removed */}
+                                <input type="number" id="cmtako-fevg" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Obstruction intraventriculaire</label>
-                                <select id="cmtako-obstruction" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Obstruction intraventriculaire</label> {/* mb-2 removed */}
+                                <select id="cmtako-obstruction" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Présente">Présente</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Insuffisance mitrale associée</label>
-                                <select id="cmtako-im" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Insuffisance mitrale associée</label> {/* mb-2 removed */}
+                                <select id="cmtako-im" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Légère">Légère</option>
                                     <option value="Modérée">Modérée</option>
@@ -1609,9 +1821,9 @@
                         </div>
                     </div>
                     
-                    <div id="cardiomyopathy-diagnostic" class="p-4 mt-6 mb-6 bg-green-50 border border-green-200 rounded-lg">
-                        <h3 class="text-md font-medium text-green-800 mb-2">Diagnostic Suggéré</h3>
-                        <div id="cardiomyopathy-diagnostic-content" class="text-green-800">
+                    <div id="cardiomyopathy-diagnostic" class="p-4 mt-6 mb-6 bg-green-50 border border-green-200 rounded-lg dark:bg-green-900 dark:border-green-700 dark:text-green-300">
+                        <h3 class="text-md font-medium text-green-800 mb-2 dark:text-green-200">Diagnostic Suggéré</h3>
+                        <div id="cardiomyopathy-diagnostic-content" class="text-green-800 dark:text-green-300">
                             Remplissez les critères pour obtenir un diagnostic suggéré.
                         </div>
                     </div>
@@ -1620,7 +1832,7 @@
                         <button id="back-to-valvulopathy" class="secondary-btn">
                             <i class="fas fa-arrow-left mr-2"></i> Retour
                         </button>
-                        <button id="update-cardiomyopathy-diagnostic" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md mx-2">
+                        <button id="update-cardiomyopathy-diagnostic" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md mx-2 font-medium shadow-none border-none">
                             <i class="fas fa-sync-alt mr-2"></i> Mettre à jour le diagnostic
                         </button>
                         <button id="next-to-congenital" class="primary-btn">
@@ -1632,15 +1844,15 @@
             
             <!-- Congenital Heart Disease Tab -->
             <div id="congenital" class="tab-content">
-                <div class="bg-white shadow rounded-lg p-6">
-                    <h2 class="text-lg font-medium text-gray-900 mb-4">Cardiopathies Congénitales</h2>
+                <div class="content-section-container"> {/* Replaced classes */}
+                    <h2 class="section-title">Cardiopathies Congénitales</h2> {/* Replaced classes */}
                     
                     <div class="mb-6">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Shunts</h3>
+                        <h3 class="sub-section-title">Shunts</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Communication Interauriculaire (CIA)</label>
-                                <select id="cc-cia" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Communication Interauriculaire (CIA)</label> {/* mb-2 removed */}
+                                <select id="cc-cia" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Ostium secundum">Ostium secundum</option>
                                     <option value="Ostium primum">Ostium primum</option>
@@ -1649,12 +1861,12 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Taille de la CIA (mm)</label>
-                                <input type="number" id="cc-cia-taille" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Taille de la CIA (mm)</label> {/* mb-2 removed */}
+                                <input type="number" id="cc-cia-taille" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Communication Interventriculaire (CIV)</label>
-                                <select id="cc-civ" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Communication Interventriculaire (CIV)</label> {/* mb-2 removed */}
+                                <select id="cc-civ" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Périmembraneuse">Périmembraneuse</option>
                                     <option value="Musculaire">Musculaire</option>
@@ -1664,16 +1876,16 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Taille de la CIV (mm)</label>
-                                <input type="number" id="cc-civ-taille" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Taille de la CIV (mm)</label> {/* mb-2 removed */}
+                                <input type="number" id="cc-civ-taille" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Gradient à travers la CIV (mmHg)</label>
-                                <input type="number" id="cc-civ-gradient" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Gradient à travers la CIV (mmHg)</label> {/* mb-2 removed */}
+                                <input type="number" id="cc-civ-gradient" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Direction du shunt</label>
-                                <select id="cc-shunt-direction" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Direction du shunt</label> {/* mb-2 removed */}
+                                <select id="cc-shunt-direction" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Aucun">Aucun</option>
                                     <option value="Gauche-droite">Gauche-droite</option>
                                     <option value="Droite-gauche">Droite-gauche</option>
@@ -1681,25 +1893,25 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Canal Artériel Persistant (PCA)</label>
-                                <select id="cc-pca" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Canal Artériel Persistant (PCA)</label> {/* mb-2 removed */}
+                                <select id="cc-pca" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absent">Absent</option>
                                     <option value="Présent">Présent</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Diamètre du PCA (mm)</label>
-                                <input type="number" id="cc-pca-taille" step="0.1" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Diamètre du PCA (mm)</label> {/* mb-2 removed */}
+                                <input type="number" id="cc-pca-taille" step="0.1" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                             </div>
                         </div>
                     </div>
                     
                     <div class="mb-6">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Anomalies valvulaires congénitales</h3>
+                        <h3 class="sub-section-title">Anomalies valvulaires congénitales</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Bicuspidie aortique</label>
-                                <select id="cc-bicuspidie" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Bicuspidie aortique</label> {/* mb-2 removed */}
+                                <select id="cc-bicuspidie" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Type 0">Type 0 (aucun raphé)</option>
                                     <option value="Type 1">Type 1 (1 raphé)</option>
@@ -1707,8 +1919,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Fusion commissurale</label>
-                                <select id="cc-fusion" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Fusion commissurale</label> {/* mb-2 removed */}
+                                <select id="cc-fusion" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Aucune">Aucune</option>
                                     <option value="Droite-gauche">Droite-gauche</option>
                                     <option value="Droite-non coronaire">Droite-non coronaire</option>
@@ -1716,8 +1928,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Sténose pulmonaire congénitale</label>
-                                <select id="cc-stenose-pulm" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Sténose pulmonaire congénitale</label> {/* mb-2 removed */}
+                                <select id="cc-stenose-pulm" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Valvulaire">Valvulaire</option>
                                     <option value="Sous-valvulaire">Sous-valvulaire</option>
@@ -1725,18 +1937,18 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Gradient maximal (mmHg)</label>
-                                <input type="number" id="cc-gradient-pulm" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Gradient maximal (mmHg)</label> {/* mb-2 removed */}
+                                <input type="number" id="cc-gradient-pulm" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                             </div>
                         </div>
                     </div>
                     
                     <div class="mb-6">
-                        <h3 class="text-md font-medium text-gray-800 mb-3">Cardiopathies complexes</h3>
+                        <h3 class="sub-section-title">Cardiopathies complexes</h3> {/* Replaced classes */}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Anomalie d'Ebstein</label>
-                                <select id="cc-ebstein" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Anomalie d'Ebstein</label> {/* mb-2 removed */}
+                                <select id="cc-ebstein" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Légère">Légère</option>
                                     <option value="Modérée">Modérée</option>
@@ -1744,20 +1956,20 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Décalage septal (mm)</label>
-                                <input type="number" id="cc-ebstein-deplacement" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Décalage septal (mm)</label> {/* mb-2 removed */}
+                                <input type="number" id="cc-ebstein-deplacement" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Tétralogie de Fallot</label>
-                                <select id="cc-fallot" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Tétralogie de Fallot</label> {/* mb-2 removed */}
+                                <select id="cc-fallot" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="Présente">Présente</option>
                                     <option value="Réparée">Réparée</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Transposition des gros vaisseaux</label>
-                                <select id="cc-tgv" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <label class="form-label">Transposition des gros vaisseaux</label> {/* mb-2 removed */}
+                                <select id="cc-tgv" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                                     <option value="Absente">Absente</option>
                                     <option value="TGV simple">TGV simple</option>
                                     <option value="TGV complexe">TGV complexe</option>
@@ -1766,15 +1978,15 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Autre anomalie congénitale</label>
-                                <input type="text" id="cc-autre" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Préciser...">
+                                <label class="form-label">Autre anomalie congénitale</label> {/* mb-2 removed */}
+                                <input type="text" id="cc-autre" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none" placeholder="Préciser...">
                             </div>
                         </div>
                     </div>
                     
-                    <div id="congenital-diagnostic" class="p-4 mt-6 mb-6 bg-indigo-50 border border-indigo-200 rounded-lg">
-                        <h3 class="text-md font-medium text-indigo-800 mb-2">Diagnostic Suggéré</h3>
-                        <div id="congenital-diagnostic-content" class="text-indigo-800">
+                    <div id="congenital-diagnostic" class="p-4 mt-6 mb-6 bg-indigo-50 border border-indigo-200 rounded-lg dark:bg-indigo-900 dark:border-indigo-700 dark:text-indigo-300">
+                        <h3 class="text-md font-medium text-indigo-800 mb-2 dark:text-indigo-200">Diagnostic Suggéré</h3>
+                        <div id="congenital-diagnostic-content" class="text-indigo-800 dark:text-indigo-300">
                             Remplissez les critères pour obtenir un diagnostic suggéré.
                         </div>
                     </div>
@@ -1783,7 +1995,7 @@
                         <button id="back-to-cardiomyopathy" class="secondary-btn">
                             <i class="fas fa-arrow-left mr-2"></i> Retour
                         </button>
-                        <button id="update-congenital-diagnostic" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md mx-2">
+                        <button id="update-congenital-diagnostic" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md mx-2 font-medium shadow-none border-none">
                             <i class="fas fa-sync-alt mr-2"></i> Mettre à jour le diagnostic
                         </button>
                         <button id="next-to-dictation" class="primary-btn">
@@ -1795,8 +2007,8 @@
 
             <!-- Dictation Tab -->
             <div id="dictation" class="tab-content">
-                <div class="bg-white shadow rounded-lg p-6">
-                    <h2 class="text-lg font-medium text-gray-900 mb-4">Dictée Vocale du Rapport</h2>
+                <div class="content-section-container"> {/* Replaced classes */}
+                    <h2 class="section-title">Dictée Vocale du Rapport</h2> {/* Replaced classes */}
                     
                     <div class="mb-6">
                         <div class="flex items-center mb-4">
@@ -1806,7 +2018,7 @@
                             <button id="stop-recording" class="secondary-btn ml-4 hidden">
                                 <i class="fas fa-stop-circle mr-2"></i> Arrêter la dictée
                             </button>
-                            <button id="generate-conclusion" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md ml-4">
+                            <button id="generate-conclusion" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md ml-4 font-medium shadow-none border-none">
                                 <i class="fas fa-magic mr-2"></i> Générer conclusion
                             </button>
                             <div id="recording-indicator" class="hidden ml-4">
@@ -1815,21 +2027,21 @@
                         </div>
                         
                         <div class="mt-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Commentaire</label>
+                            <label class="form-label">Commentaire</label> {/* mb-2 removed */}
                             <div class="relative">
-                                <textarea id="commentaire" rows="6" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Dictez ou tapez votre commentaire ici..."></textarea>
+                                <textarea id="commentaire" rows="6" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none" placeholder="Dictez ou tapez votre commentaire ici..."></textarea>
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-xs text-gray-500" id="dictation-status"></div>
                             </div>
                         </div>
                         
                         <div class="mt-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Doppler</label>
-                            <textarea id="doppler-commentaire" rows="3" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Commentaire sur les mesures Doppler..."></textarea>
+                            <label class="form-label">Doppler</label> {/* mb-2 removed */}
+                            <textarea id="doppler-commentaire" rows="3" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none" placeholder="Commentaire sur les mesures Doppler..."></textarea>
                         </div>
                         
                         <div class="mt-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Conclusion</label>
-                            <textarea id="conclusion" rows="3" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Conclusion de l'examen..."></textarea>
+                            <label class="form-label">Conclusion</label> {/* mb-2 removed */}
+                            <textarea id="conclusion" rows="3" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none" placeholder="Conclusion de l'examen..."></textarea>
                         </div>
                     </div>
                     
@@ -1846,10 +2058,10 @@
 
             <!-- Report Tab -->
             <div id="report" class="tab-content">
-                <div class="bg-white shadow rounded-lg p-6">
-                    <h2 class="text-lg font-medium text-gray-900 mb-4">Rapport d'Échographie Doppler Cardiaque</h2>
+                <div class="content-section-container"> {/* Replaced classes */}
+                    <h2 class="section-title">Rapport d'Échographie Doppler Cardiaque</h2> {/* Replaced classes */}
                     
-                    <div id="report-preview" class="mb-6 border border-gray-200 rounded-lg p-6">
+                    <div id="report-preview" class="mb-6 border border-gray-300 rounded-lg p-6"> {/* Updated border gray-200 to gray-300 */}
                         <!-- Report content will be rendered here -->
                         <div class="text-center text-gray-500">
                             <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
@@ -1858,7 +2070,7 @@
                     </div>
                     
                     <div class="mb-6">
-                        <button id="analyze-report" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md flex items-center">
+                        <button id="analyze-report" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md flex items-center font-medium shadow-none border-none">
                             <i class="fas fa-brain mr-2"></i> Analyse IA du Rapport
                         </button>
                         <div id="ai-analysis" class="mt-4 p-4 border border-gray-200 rounded-lg hidden">
@@ -1882,7 +2094,7 @@
                         <button id="save-report" class="secondary-btn flex items-center">
                             <i class="fas fa-save mr-2"></i> Enregistrer
                         </button>
-                        <button id="reset-form" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md flex items-center">
+                        <button id="reset-form" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md flex items-center font-medium shadow-none border-none">
                             <i class="fas fa-redo-alt mr-2"></i> Nouveau Rapport
                         </button>
                     </div>
@@ -1897,13 +2109,13 @@
         </main>
 
         <!-- Add this just before closing main tag -->
-        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 md:hidden z-50">
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 md:hidden z-50 dark:bg-gray-800 dark:border-gray-700">
             <div class="flex justify-between items-center">
-                <button id="prev-tab" class="text-gray-600 p-2">
+                <button id="prev-tab" class="p-2 rounded text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
                     <i class="fas fa-arrow-left"></i>
                 </button>
-                <span id="current-tab-name" class="text-sm font-medium">Patient</span>
-                <button id="next-tab" class="text-gray-600 p-2">
+                <span id="current-tab-name" class="text-sm font-medium dark:text-gray-200">Patient</span>
+                <button id="next-tab" class="p-2 rounded text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
                     <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
@@ -1922,26 +2134,26 @@
         <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-medium text-gray-900">Paramètres</h3>
-                    <button id="close-settings" class="text-gray-400 hover:text-gray-500">
+                    <h3 class="section-title" style="margin-bottom: 1rem;">Paramètres</h3> {/* Used section-title, adjusted margin for modal context */}
+                    <button id="close-settings" class="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Nom du Médecin</label>
-                    <input type="text" id="doctor-name" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Dr. Nom du médecin">
+                    <label class="form-label">Nom du Médecin</label> {/* mb-2 removed */}
+                    <input type="text" id="doctor-name" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none" placeholder="Dr. Nom du médecin">
                 </div>
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Organisation / Hôpital</label>
-                    <input type="text" id="organization" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500" value="CNC: Centre National de Cardiologie">
+                    <label class="form-label">Organisation / Hôpital</label> {/* mb-2 removed */}
+                    <input type="text" id="organization" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none" value="CNC: Centre National de Cardiologie">
                 </div>
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Logo (URL)</label>
-                    <input type="text" id="logo-url" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="URL du logo">
+                    <label class="form-label">Logo (URL)</label> {/* mb-2 removed */}
+                    <input type="text" id="logo-url" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none" placeholder="URL du logo">
                 </div>
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Modèle de Rapport</label>
-                    <select id="report-template" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <label class="form-label">Modèle de Rapport</label> {/* mb-2 removed */}
+                    <select id="report-template" class="block w-full border border-gray-300 rounded-md py-2 px-3 text-base focus:outline-none">
                         <option value="compact">Compact (une page)</option>
                         <option value="standard">Standard</option>
                         <option value="detailed">Détaillé</option>
@@ -3871,20 +4083,23 @@
         function showFlashMessage(message, type = 'info') {
             const flashMessage = document.getElementById('flash-message');
             flashMessage.textContent = message;
-            flashMessage.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-blue-100', 'text-blue-800', 'bg-yellow-100', 'text-yellow-800');
             
+            // Remove any existing flash type classes and Tailwind bg/text classes
+            flashMessage.className = 'hidden mb-6 p-4 rounded'; // Reset to base classes
+            flashMessage.classList.add('flash-message-base'); // Add base class if defined in CSS
+
             switch (type) {
                 case 'success':
-                    flashMessage.classList.add('bg-green-100', 'text-green-800');
+                    flashMessage.classList.add('flash-success');
                     break;
                 case 'error':
-                    flashMessage.classList.add('bg-red-100', 'text-red-800');
+                    flashMessage.classList.add('flash-error');
                     break;
                 case 'warning':
-                    flashMessage.classList.add('bg-yellow-100', 'text-yellow-800');
+                    flashMessage.classList.add('flash-warning');
                     break;
-                default:
-                    flashMessage.classList.add('bg-blue-100', 'text-blue-800');
+                default: // info
+                    flashMessage.classList.add('flash-info');
             }
             
             flashMessage.classList.remove('hidden');
